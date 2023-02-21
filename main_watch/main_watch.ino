@@ -14,7 +14,7 @@
 
 //#include "MAX30100_PulseOximeter.h"
 //BH1750 lightMeter;
- 
+
 //#define REPORTING_PERIOD_MS 1000
 
 //PulseOximeter pox;
@@ -44,7 +44,9 @@ FirebaseConfig config;
 //    Serial.println("Beat Detected!");
 //}
 
-int BodyTemperature_value, HeartRate_value, Light_value, OxygenSaturation_value, Sound_value, Touch_value;
+int heartBeat_value, light_value, oxygen_value, sound_value, touch_value;
+
+//float temperature_value;
 
 void setup() {
 
@@ -53,26 +55,27 @@ void setup() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
+  Firebase.reconnectWiFi(true);
   Firebase.begin(DATABASE_URL, API_KEY);
   Firebase.setDoubleDigits(5);
 
-  pinMode(2, OUTPUT);
+  pinMode(2, OUTPUT);  // inbuilt LED for WiFi status
 
-  
-    
+
+
   pinMode(touch_sensor_pin, INPUT);
   pinMode(sound_sensor_pin, INPUT);
-  
-//  Serial.print("Initializing Pulse Oximeter..");
-//
-//  if (!pox.begin()) {
-//       Serial.println("FAILED");
-//       for(;;);
-//  } else {
-//       Serial.println("SUCCESS");
-//       pox.setOnBeatDetectedCallback(onBeatDetected);
-//  }
-//      pox.setIRLedCurrent(MAX30100_LED_CURR_7_6MA);
+
+  //  Serial.print("Initializing Pulse Oximeter..");
+  //
+  //  if (!pox.begin()) {
+  //       Serial.println("FAILED");
+  //       for(;;);
+  //  } else {
+  //       Serial.println("SUCCESS");
+  //       pox.setOnBeatDetectedCallback(onBeatDetected);
+  //  }
+  //      pox.setIRLedCurrent(MAX30100_LED_CURR_7_6MA);
 
 }
 
@@ -80,33 +83,57 @@ void loop() {
 
   if (Firebase.ready()) {
 
-    digitalWrite(2,HIGH);
+    digitalWrite(2, HIGH);
 
-//    Firebase.getInt(fbdo, "Values/BodyTemperature");
-//    BodyTemperature_value = fbdo.to<int>();
+    //    Set Variables
+//        Firebase.setFloat(fbdo, "/Sensor/temperature", 10);
+    //    Firebase.setInt(fbdo, "/Sensor/heartBeat", 11);
+    //    Firebase.setInt(fbdo, "/Sensor/oxygen", 12);
+    //    Firebase.setInt(fbdo, "/Sensor/sound", 13);
+    //    Firebase.setInt(fbdo, "/Sensor/light", 14);
+    //    Firebase.setInt(fbdo, "/Sensor/touch", 15);
 
-//    Firebase.getInt(fbdo, "/Values/HeartRate");
-//    HeartRate_value = fbdo.to<int>();
-//
-//    Firebase.getInt(fbdo, "/Values/Light");
-//    Light_value = fbdo.to<int>();
-//
-//    Firebase.getInt(fbdo, "/Values/OxygenSaturation");
-//    OxygenSaturation_value = fbdo.to<int>();
-//
-//    Firebase.getInt(fbdo, "/Values/Sound");
-//    Sound_value = fbdo.to<int>();
-//
-//    Firebase.getInt(fbdo, "/Values/Touch");
-//    Touch_value = fbdo.to<int>();
+//    Firebase.pushString("/Sensor/temperature", String(12.4)); 
+    //    Firebase.setInt(fbdo, "/Sensor/oxygen", 14);
 
-    Serial.println(Touch_value);
+    Firebase.getFloat(fbdo, "/Sensor/temperature");
+    String temperature_value = fbdo.to<String>();
+
+    Firebase.getInt(fbdo, "/Sensor/heartBeat");
+    heartBeat_value = fbdo.to<int>();
+
+    Firebase.getInt(fbdo, "/Sensor/light");
+    light_value = fbdo.to<int>();
+
+    Firebase.getInt(fbdo, "/Sensor/oxygen");
+    oxygen_value = fbdo.to<int>();
+
+    Firebase.getInt(fbdo, "/Sensor/sound");
+    sound_value = fbdo.to<int>();
+
+    Firebase.getInt(fbdo, "/Sensor/touch");
+    touch_value = fbdo.to<int>();
+
+    FirebaseJson json;
+
+    //  Printing Data
+    Serial.print("temperature:");
+    Serial.print(temperature_value);
+    Serial.print(" heartBeat: ");
+    Serial.print(heartBeat_value);
+    Serial.print(" oxygen: ");
+    Serial.print(oxygen_value);
+    Serial.print(" sound: ");
+    Serial.print(sound_value);
+    Serial.print(" light: ");
+    Serial.print(light_value);
+    Serial.print(" touch: ");
+    Serial.println(touch_value);
+
+
 
     delay(100);
 
-//    json.set("/data", 100);
-//    Firebase.updateNode(firebaseData,"/Sensor",json);
-  
   }
 
 }
