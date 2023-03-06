@@ -53,9 +53,7 @@ void loop() {
         Serial.print("Heart rate:");
         Serial.print(BPM);
         Serial.print(" bpm / SpO2:");
-        Serial.print(SpO2);
-        Serial.println(" %   /  Light");
-        
+        Serial.println(SpO2);
         tsLastReport = millis();
     }
     if(digitalRead(touch_pin)==HIGH){
@@ -64,5 +62,7 @@ void loop() {
     if(digitalRead(sound_pin)==HIGH){
       Serial.println("loud sound");  
     }
+
+    
     
 }
